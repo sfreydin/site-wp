@@ -1,0 +1,34 @@
+version: '2'
+services:
+  nginx:
+    image: sfreydin/nginx:mysql
+    ports:
+    - 8089:80
+    volumes:
+    - ./src/:/usr/share/nginx/html
+    - ./configs:/etc/nginx/conf.d
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+  php:
+    image: local/php:7.3
+    build: 
+      context: ./php
+      dockerfile: Dockerfile-73
+    volumes:
+    - ./src/:/usr/share/nginx/html
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=1
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=ChangME
+      - MYSQL_DATABASE=db
+    volumes:
+      - ./data/:/var/lib/mysql
+    ports:
+      - 3307:3306
+
